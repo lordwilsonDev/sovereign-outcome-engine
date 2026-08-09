@@ -1,0 +1,41 @@
+name: factory-gate
+
+# Engineering-hygiene factory gate for sovereign-outcome-engine.
+# Every push/PR to main re-runs the pytest suite (8 tests) and the four
+# offline hygiene experiments. Any non-PASS leg fails the job, which blocks
+# the push/merge.
+#
+# Engine deps: pytest for the suite, pyyaml for template loading (buh_dna
+# validates/renders the YAML templates). Live-auth is scoped out (CLI engine)
+# — consistent with suite.json.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  gate:
+    name: factory-gate (pytest + hygiene)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install (pytest + pyyaml — engine templates need YAML)
+        run: |
+          pip install --upgrade pip
+          pip install pytest pyyaml
+
+      - name: Regression suite (pytest)
+        run: pytest -q
+
+      - name: Hygiene suite (offline experiments)
+        env:
+          MSB_REPO: ${{ github.workspace }}
+        run: python scripts/hygiene/hygiene_runner.py --all
