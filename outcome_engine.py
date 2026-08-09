@@ -155,15 +155,15 @@ def scan_text_content(text: str, pii_hits: Counter, sensitive_hits: Counter) -> 
 
 def scan_directory(root: Path) -> dict:
     """Read-only inventory. Never writes/moves/uploads prospect data."""
-    counts = Counter()
-    sizes = Counter()
-    ext_counts = Counter()
+    counts: Counter[str] = Counter()
+    sizes: Counter[str] = Counter()
+    ext_counts: Counter[str] = Counter()
     oldest = None
     newest = None
     scanned_files = 0
-    sampled = defaultdict(list)  # category -> up to 8 file names (for the report)
-    pii_hits = Counter()
-    sensitive_hits = Counter()
+    sampled: dict[str, list[str]] = defaultdict(list)  # category -> up to 8 file names
+    pii_hits: Counter[str] = Counter()
+    sensitive_hits: Counter[str] = Counter()
     total_text_bytes = 0
 
     for dirpath, dirnames, filenames in os.walk(root):
@@ -334,15 +334,13 @@ def scan_vault(root: str, secret: str, max_files: int = 2000) -> dict:
     Read-only: we only list and read. Path-traversal guarded by the bridge
     itself (it rejected '/'), and we cap total files to stay polite.
     """
-    counts = Counter()
-    sizes = Counter()
-    ext_counts = Counter()
-    oldest = None
-    newest = None
+    counts: Counter[str] = Counter()
+    sizes: Counter[str] = Counter()
+    ext_counts: Counter[str] = Counter()
     scanned_files = 0
-    sampled = defaultdict(list)
-    pii_hits = Counter()
-    sensitive_hits = Counter()
+    sampled: dict[str, list[str]] = defaultdict(list)
+    pii_hits: Counter[str] = Counter()
+    sensitive_hits: Counter[str] = Counter()
     total_text_bytes = 0
 
     def walk(rel: str, depth: int = 0) -> None:
@@ -437,7 +435,7 @@ def llm_summary(client: str, industry: dict, score: dict, deal: dict) -> str:
 # REPORT — one page, sovereign aesthetic
 # ══════════════════════════════════════════════════════════════════════════════
 
-def fmt_size(b: int) -> str:
+def fmt_size(b: float) -> str:
     for unit in ("B", "KB", "MB", "GB"):
         if b < 1024 or unit == "GB":
             return f"{b:.0f} {unit}" if unit == "B" else f"{b:.1f} {unit}"

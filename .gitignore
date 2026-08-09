@@ -6,3 +6,4 @@ __pycache__/
 # Per-run hygiene experiment artifacts (ephemeral); keep aggregate + gate
 artifacts/hygiene/s0*_*.json
 artifacts/hygiene/*_review.json
+.coverage

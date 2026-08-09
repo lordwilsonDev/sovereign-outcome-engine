@@ -47,6 +47,7 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 try:
     import yaml  # PyYAML — available on the node (verified 6.0.2)
@@ -508,6 +509,7 @@ def run_template(template_id: str, client: str, local_dir: Path | None, vault_pa
     template = load_template(template_id)
 
     # 1. INGEST (read-only)
+    groups: dict[str, list[Any]] = {}
     if vault_path:
         if not secret:
             print("❌ --vault requires the bridge secret: pass --secret or set MCP_BRIDGE_SECRET", file=sys.stderr)
@@ -517,6 +519,9 @@ def run_template(template_id: str, client: str, local_dir: Path | None, vault_pa
         doc_sources = [(name, text) for name, text in groups.get("docs", [])]
         csv_sources = [(name, text) for name, text in groups.get("csv", [])]
     else:
+        if local_dir is None:
+            print("❌ --dir is required when --vault is not given", file=sys.stderr)
+            return 1
         root = local_dir.expanduser().resolve()
         if not root.is_dir():
             print(f"❌ Not a directory: {root}", file=sys.stderr)
@@ -612,7 +617,7 @@ def review_deliverable(deliverable: Path, reviewer: str) -> int:
     payload = json.loads(data_path.read_text(encoding="utf-8"))
     sidecar = json.loads(review_path.read_text(encoding="utf-8"))
     if sidecar.get("status") == "REVIEWED":
-        print(f"ℹ️  Already REVIEWED — appending another approval entry.")
+        print("ℹ️  Already REVIEWED — appending another approval entry.")
     entry = {"at": now_iso(), "action": "reviewed", "by": reviewer or "Human Reviewer"}
     sidecar.setdefault("entries", []).append(entry)
     sidecar["status"] = "REVIEWED"

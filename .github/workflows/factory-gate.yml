@@ -1,9 +1,13 @@
 name: factory-gate
 
 # Engineering-hygiene factory gate for sovereign-outcome-engine.
-# Every push/PR to main re-runs the pytest suite (8 tests) and the four
-# offline hygiene experiments. Any non-PASS leg fails the job, which blocks
-# the push/merge.
+# Every push/PR to main re-runs the pytest suite (8 tests), a coverage gate
+# (subprocess-aware — the tests exercise the engine via sys.executable), mypy,
+# ruff (E9/F/I), and the four offline hygiene experiments. Any non-PASS leg
+# fails the job, which blocks the push/merge.
+#
+# Coverage baseline: 63% measured on 2026-08-09 — the gate prevents
+# regression below 60%. Raise it as coverage grows.
 #
 # Engine deps: pytest for the suite, pyyaml for template loading (buh_dna
 # validates/renders the YAML templates). Live-auth is scoped out (CLI engine)
@@ -18,7 +22,7 @@ on:
 
 jobs:
   gate:
-    name: factory-gate (pytest + hygiene)
+    name: factory-gate (tests + cov + types + lint + hygiene)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,13 +31,30 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install (pytest + pyyaml — engine templates need YAML)
+      - name: Install (pytest + pyyaml + gate tools)
         run: |
           pip install --upgrade pip
-          pip install pytest pyyaml
+          pip install pytest pyyaml pytest-cov mypy ruff
 
-      - name: Regression suite (pytest)
-        run: pytest -q
+      - name: Regression suite + coverage gate (CLI subprocess coverage)
+        run: |
+          set -euo pipefail
+          # The tests run the engine as a subprocess (sys.executable), so
+          # plain pytest-cov sees nothing. Install a site-packages .pth hook
+          # that starts coverage in every child, then merge the child data.
+          # The coverage run below IS the regression run (pytest exit code
+          # propagates through `coverage run`).
+          python -c "import site; p=site.getsitepackages()[0]; open(p+'/covstartup.pth','w').write('import coverage; coverage.process_startup()\n')"
+          printf '[run]\nsource = outcome_engine, buh_dna\nparallel = true\ndata_file = %s/.coverage\n' "$RUNNER_TEMP" > /tmp/coveragerc
+          COVERAGE_PROCESS_START=/tmp/coveragerc python -m coverage run --rcfile=/tmp/coveragerc -m pytest -q
+          (cd "$RUNNER_TEMP" && python -m coverage combine --rcfile=/tmp/coveragerc)
+          python -m coverage report --rcfile=/tmp/coveragerc --fail-under=60
+
+      - name: Typed enforcement (mypy)
+        run: mypy outcome_engine.py buh_dna.py --ignore-missing-imports
+
+      - name: Lint gate (ruff E9/F/I)
+        run: ruff check --select E9,F,I .
 
       - name: Hygiene suite (offline experiments)
         env:
