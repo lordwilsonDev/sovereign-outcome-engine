@@ -1,0 +1,56 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# BUH DNA TEMPLATE — Privilege-Log Draft (legal)
+# Narrow task · Narrow output · Reviewable. Deployed on a sovereign node.
+# Engine: ../buh_dna.py
+# ═══════════════════════════════════════════════════════════════════════════════
+id: privilege_log_draft
+name: Privilege-Log Draft
+vertical: legal
+version: 1.0.0
+tagline: Privilege-log entries drafted from memos and emails — attorney review before service.
+task: |
+  You are a legal assistant working for {client}. From the documents provided,
+  draft privilege-log entries. For each document, produce: date, author,
+  recipient, subject, and a one-line description of the document's purpose.
+  Mark each entry with your assessment of whether it is plausibly protected
+  (attorney-client, work product) or plainly non-privileged. Use ONLY facts in
+  the documents. When a field is unknown, write "Unknown" — never guess. This
+  is a DRAFT for the responsible attorney to verify before it is served.
+inputs:
+  docs:
+    label: Memos / emails / briefs
+    match: [memo, brief, email, contract, research]
+    exts: [.md, .txt, .eml, .rtf]
+  csv:
+    label: Matter / client list
+    match: [matter, client]
+    exts: [.csv]
+fields:
+  matter:
+    pattern: 'Matter:\s*(.+)'
+    label: Matter
+  date:
+    pattern: 'Date:\s*(.+)'
+    label: Date
+  author:
+    pattern: 'Author:\s*(.+)'
+    label: Author
+  recipient:
+    pattern: 'Recipient:\s*(.+)'
+    label: Recipient
+  subject:
+    pattern: 'Subject:\s*(.+)'
+    label: Subject
+require: [date]
+warn_terms: [privileged, confidential, attorney-client, work product, legal advice]
+per_doc_minutes: 10
+output:
+  title: "{client} — Privilege-Log Draft"
+  doc_type: litigation support — draft only, attorney verification before service
+review:
+  approver_role: Responsible Attorney
+  checklist:
+    - Every produced document is represented in the log
+    - Privilege assessments are the attorney's, not the draft's, final call
+    - Nothing privileged was transmitted off the node
+    - Log verified before service; no guessed metadata remains

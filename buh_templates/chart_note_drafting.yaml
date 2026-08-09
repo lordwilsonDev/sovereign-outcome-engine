@@ -1,0 +1,58 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# BUH DNA TEMPLATE — Chart-Note Drafting (healthcare)
+# Narrow task · Narrow output · Reviewable. Deployed on a sovereign node.
+# Engine: ../buh_dna.py
+# ═══════════════════════════════════════════════════════════════════════════════
+id: chart_note_drafting
+name: Chart-Note Drafting
+vertical: healthcare
+version: 1.0.0
+tagline: SOAP-style chart-note draft from a clinician's working notes — review before filing.
+task: |
+  You are a medical scribe working for {client}. From the clinician's notes
+  provided below, draft ONE chart note in SOAP format: Subjective, Objective,
+  Assessment, Plan. Use ONLY facts present in the notes. Do not invent
+  diagnoses, medications, or findings. If a section cannot be supported by the
+  notes, write "Not documented." Keep the tone clinical and neutral. This draft
+  is NOT a final record — a licensed provider must review it.
+inputs:
+  docs:
+    label: Clinician notes / intake
+    match: [note, chart, intake, assessment, visit]
+    exts: [.md, .txt, .rtf]
+  csv:
+    label: Schedule / referral list
+    match: [referral, schedule, patient]
+    exts: [.csv]
+fields:
+  patient:
+    pattern: 'Patient:\s*(.+)'
+    label: Patient
+  date:
+    pattern: 'Date:\s*(.+)'
+    label: Date
+  provider:
+    pattern: 'Provider:\s*(.+)'
+    label: Provider
+  chief_complaint:
+    pattern: 'Chief complaint:\s*(.+)'
+    label: Chief complaint
+  assessment:
+    pattern: 'Assessment:\s*(.+)'
+    label: Assessment
+  plan:
+    pattern: 'Plan:\s*(.+)'
+    label: Plan
+require: [patient, date]
+warn_terms: [hipaa, ssn, dob, diagnosis, prescription]
+per_doc_minutes: 12
+output:
+  title: "{client} — Chart-Note Draft"
+  doc_type: clinical document — draft only, provider review before filing
+review:
+  approver_role: Licensed Provider
+  checklist:
+    - Patient and date fields match the source notes
+    - No diagnosis, medication, or finding was invented
+    - PHI stays on-node; nothing was transmitted off the vault
+    - Draft was reviewed and corrected by the provider before filing

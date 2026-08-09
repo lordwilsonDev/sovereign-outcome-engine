@@ -1,0 +1,103 @@
+{
+  "PROJECT_MAP": {
+    "project_id": "9f80a9abe62c",
+    "name": "sovereign-outcome-engine",
+    "root": "/Users/lordwilson/sovereign-outcome-engine",
+    "discovered_at": "2026-08-09T16:16:38.136962+00:00"
+  },
+  "BASELINE": {
+    "project": {
+      "project_id": "9f80a9abe62c",
+      "name": "sovereign-outcome-engine",
+      "root": "/Users/lordwilson/sovereign-outcome-engine",
+      "discovered_at": "2026-08-09T16:16:38.136962+00:00"
+    },
+    "tests": "n/a",
+    "git": "n/a",
+    "dependencies": "n/a",
+    "claims": []
+  },
+  "VERIFICATION": {
+    "pytest": {
+      "passed": true,
+      "summary": "8 passed in 0.62s",
+      "duration_s": 1
+    },
+    "live_auth": {
+      "verified": null,
+      "detail": "scoped out \u2014 project declares live_auth:false in suite.json",
+      "correct_secret": null,
+      "wrong_secret": null,
+      "missing_secret": null
+    }
+  },
+  "SUITE_CONFIG": {
+    "source": "<project>/scripts/hygiene/suite.json",
+    "experiments": [
+      "s01_template_check",
+      "s02_scan_determinism",
+      "s03_review_gate",
+      "s04_safety_contract"
+    ],
+    "live_auth": false
+  },
+  "EVIDENCE_INDEX": {
+    "claims_verified": 4,
+    "artifacts": [
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260809T161639Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260809T161639Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260809T161639Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260809T161639Z.json"
+    ],
+    "verified_at": "2026-08-09T16:16:39.893893+00:00",
+    "member_results": [
+      {
+        "experiment": "s01_template_check",
+        "skill": "configuration-hygiene",
+        "verdict": "pass",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260809T161639Z.json",
+        "violations": []
+      },
+      {
+        "experiment": "s02_scan_determinism",
+        "skill": "determinism",
+        "verdict": "pass",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260809T161639Z.json",
+        "violations": []
+      },
+      {
+        "experiment": "s03_review_gate",
+        "skill": "audit-hygiene",
+        "verdict": "pass",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260809T161639Z.json",
+        "violations": []
+      },
+      {
+        "experiment": "s04_safety_contract",
+        "skill": "data-hygiene",
+        "verdict": "pass",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260809T161639Z.json",
+        "violations": []
+      }
+    ]
+  },
+  "RELEASE_VERDICT": {
+    "critical_requirements_tested": true,
+    "critical_invariants_verified": false,
+    "critical_failures_resolved": true,
+    "security_boundaries_tested": false,
+    "state_recovery_tested": false,
+    "important_failure_modes_have_experiments": true,
+    "claims_have_evidence": true,
+    "regression_passed": true,
+    "reproducibility_documented": true,
+    "live_auth_verified": false,
+    "unresolved_unknowns_disclosed": true,
+    "release_verdict": "PASS",
+    "unresolved_unknowns": [],
+    "notes": [
+      "live_auth scoped out: project suite.json declares live_auth:false (no server to probe)"
+    ],
+    "artifact_schema_violations": 0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-08-09T16:16:39.884433+00:00",
+  "environment": {
+    "repo": "/Users/lordwilson/sovereign-outcome-engine",
+    "python": "/opt/homebrew/Caskroom/miniforge/base/bin/python",
+    "experiments": 4
+  },
+  "results": [
+    {
+      "experiment": "s01_template_check",
+      "verdict": "pass",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260809T161639Z.json",
+      "returncode": 0
+    },
+    {
+      "experiment": "s02_scan_determinism",
+      "verdict": "pass",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260809T161639Z.json",
+      "returncode": 0
+    },
+    {
+      "experiment": "s03_review_gate",
+      "verdict": "pass",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260809T161639Z.json",
+      "returncode": 0
+    },
+    {
+      "experiment": "s04_safety_contract",
+      "verdict": "pass",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260809T161639Z.json",
+      "returncode": 0
+    }
+  ],
+  "factory_verdict": "pass",
+  "factory_gate": {
+    "any_fail": false,
+    "any_unknown": false,
+    "all_pass": true
+  }
+}

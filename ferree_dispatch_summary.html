@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferree Movers — Load &amp; Dispatch Summary</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+         background:#0a0a0f; color:#e0e0e0; line-height:1.6; }
+  .hero { padding:3rem 2rem 2rem; text-align:center;
+           background:radial-gradient(ellipse at center,#151530 0%,#0a0a0f 70%); }
+  .tag { color:#8b5cf6; letter-spacing:.25em; text-transform:uppercase; font-size:.75rem; }
+  h1 { font-size:clamp(1.8rem,4vw,2.8rem); margin:.8rem 0 .4rem;
+        background:linear-gradient(135deg,#8b5cf6,#06b6d4);
+        -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .sub { color:#a0a0b0; font-size:.95rem; max-width:640px; margin:0 auto; }
+  .banner { display:inline-block; margin-top:1rem; padding:.45rem 1.2rem; border-radius:99px;
+             border:1px solid #f59e0b; color:#f59e0b;
+             font-size:.8rem; letter-spacing:.12em; }
+  section { max-width:960px; margin:0 auto; padding:2rem; }
+  h2 { color:#8b5cf6; font-size:1.25rem; margin-bottom:1rem;
+        display:flex; align-items:center; gap:.5rem; }
+  .card { background:#14141f; border:1px solid #26263a; border-radius:14px;
+           padding:1.4rem; margin-bottom:1.2rem; }
+  table { width:100%; border-collapse:collapse; font-size:.9rem; }
+  th,td { text-align:left; padding:.55rem; border-bottom:1px solid #1e1e2e; vertical-align:top; }
+  th { color:#a0a0b0; font-weight:500; font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; }
+  .empty { color:#606070; font-style:italic; }
+  .flag { margin:.4rem 0; padding:.5rem .8rem; border-radius:8px; list-style:none; font-size:.9rem; }
+  .flag.warn { background:#2a1a10; border:1px solid #7c4a03; color:#fbbf24; }
+  .flag.info { background:#101a2a; border:1px solid #1e3a5f; color:#7dd3fc; }
+  .flag.ok { background:#0f2418; border:1px solid #14532d; color:#6ee7b7; }
+  .draft p { margin:.5rem 0; }
+  .hint { color:#606070; font-size:.8rem; margin-top:.8rem; font-style:italic; }
+  .cb { color:#06b6d4; margin-right:.4rem; }
+  .review-meta { color:#10b981; margin-top:.8rem; font-size:.9rem; }
+  .estimate { display:inline-block; padding:.35rem .9rem; border-radius:99px;
+               border:1px solid #06b6d4; color:#06b6d4; font-size:.8rem; }
+  ul.checklist { padding-left:0; list-style:none; }
+  ul.checklist li { padding:.35rem 0; border-bottom:1px dashed #1e1e2e; }
+  footer { text-align:center; color:#404050; padding:2rem; border-top:1px solid #1a1a2e; font-size:.8rem; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <div class="tag">BUH DNA Template · logistics</div>
+    <h1>Ferree Movers — Load &amp; Dispatch Summary</h1>
+    <p class="sub">One-page daily dispatch brief — every load, every window, every flag.</p>
+    <div class="banner">DRAFT — AWAITING HUMAN REVIEW</div>
+    <p style="color:#606070;font-size:.8rem;margin-top:.8rem;">Ferree Movers · August 09, 2026 · operations document</p>
+  </div>
+
+  <section>
+    <h2>🚚 Documents Extracted</h2>
+    <div class="card"><table><thead><tr><th>Customer</th><th>Pickup</th><th>Drop</th><th>Driver</th><th>Truck</th><th>Notes</th><th>Contact</th></tr></thead><tbody><tr><td>ACME Retail Distribution</td><td>500 W College Ave, Appleton, WI</td><td>2201 N Richmond St, Appleton, WI</td><td>J. Ramos</td><td>26ft box truck</td><td>Loading dock available 8am-11am. Call ahead.</td><td>dispatch@demo-acme.example</td></tr><tr><td>Fox Valley Parts Co</td><td>4101 Victory Ln, Oshkosh, WI</td><td>1210 W Frontage Rd, Neenah, WI</td><td>M. Okafor</td><td>Flatbed 40ft</td><td>Fragile — crate #3 is glass. Temperature-sensitive.</td><td></td></tr></tbody></table>
+      <p class="hint">2 document(s) matched the template's input spec ·
+         read-only · nothing copied off the node.
+         <span class="estimate">~30 min of manual drafting avoided this run</span></p>
+    </div>
+
+    <h2>⚠️ Flags — read before distributing</h2>
+    <div class="card"><ul style="padding-left:0;"><li class='flag info'>Term &#x27;fragile&#x27; present — load_2.md (review context)</li><li class='flag info'>Term &#x27;glass&#x27; present — load_2.md (review context)</li><li class='flag info'>Term &#x27;temperature&#x27; present — load_2.md (review context)</li><li class='flag warn'>Demo/unroutable contact email in load_1.md — do not send real outreach to it</li></ul></div>
+
+    <h2>📇 Customer Follow-Up List</h2>
+    <div class="card"><table><thead><tr><th>customer</th><th>email</th><th>last_move</th><th>status</th></tr></thead><tbody><tr><td>Acme Retail</td><td>demo1@acme.example</td><td>2026-06-01</td><td>pending quote</td></tr><tr><td>Fox Valley Parts</td><td>demo2@fvparts.example</td><td>2026-07-15</td><td>needs followup</td></tr><tr><td>Green Bay Brew Co</td><td>demo3@gbbrew.example</td><td>2026-05-20</td><td>followed up</td></tr><tr><td>Oshkosh Office Supply</td><td>demo4@os.example</td><td>2026-08-01</td><td>booked</td></tr></tbody></table></div>
+
+    <h2>✍️ Draft</h2>
+    <div class='card'><h3>📝 Draft (logistics — local model)</h3><div class='draft'><p>**Board overview**  </p><p>Two live loads: Load 1 (ACME Retail Distribution) with driver J. Ramos in a 26ft box truck, requiring loading dock access by 11am. Load 2 (Fox Valley Parts Co) with driver M. Okafor in a 40ft flatbed, carrying fragile glass cargo that is temperature-sensitive. No time-sensitive alerts beyond the loading dock window for Load 1.  </p><p>**Open follow-ups**  </p><p>- Acme Retail (pending quote)  </p><p>- Fox Valley Parts (needs followup)  </p><p>**Next actions**  </p><p>1. Review Load 2 for fragile glass cargo handling protocols.  </p><p>2. Confirm loading dock availability for Load 1 before 11am.  </p><p>3. Contact Fox Valley Parts Co to address their pending follow-up.</p></div><p class='hint'>Auto-drafted by qwen3:8b on the sovereign node. Verify against source documents.</p></div>
+
+    <h2>🔏 Review Gate</h2>
+    <div class="card">
+      <p style="color:#a0a0b0;">Required sign-off: <strong>Dispatch Manager</strong></p>
+      <ul class="checklist"><li><span class='cb'>☐</span> Every load on today&#x27;s board appears in the table</li><li><span class='cb'>☐</span> Pickup and drop addresses match the source documents</li><li><span class='cb'>☐</span> Flags are resolved or explicitly acknowledged by the dispatcher</li><li><span class='cb'>☐</span> The narrative does not invent facts absent from the source docs</li></ul>
+      <p class='review-meta'>Approved by <strong>buh_dna.py</strong> · August 09, 2026</p>
+    </div>
+  </section>
+
+  <footer>
+    Generated by BlackSwanLabz · Fox Valley AI Cooperative · sovereign node · August 09, 2026<br>
+    We measure before we promise. This draft is the evidence; the review gate is the contract.
+  </footer>
+</body>
+</html>

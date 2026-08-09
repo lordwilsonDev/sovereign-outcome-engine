@@ -1,0 +1,5 @@
+customer,email,last_move,status
+Acme Retail,demo1@acme.example,2026-06-01,pending quote
+Fox Valley Parts,demo2@fvparts.example,2026-07-15,needs followup
+Green Bay Brew Co,demo3@gbbrew.example,2026-05-20,followed up
+Oshkosh Office Supply,demo4@os.example,2026-08-01,booked

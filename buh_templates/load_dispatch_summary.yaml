@@ -1,0 +1,65 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# BUH DNA TEMPLATE — Load & Dispatch Summary (logistics beachhead)
+# Narrow task · Narrow output · Reviewable. Deployed on a sovereign node.
+# Engine: ../buh_dna.py
+# ═══════════════════════════════════════════════════════════════════════════════
+id: load_dispatch_summary
+name: Load & Dispatch Summary
+vertical: logistics
+version: 1.0.0
+tagline: One-page daily dispatch brief — every load, every window, every flag.
+task: |
+  You are the drafting assistant for {client}'s dispatch office. Write a SHORT,
+  factual Load & Dispatch Summary for the dispatch team using ONLY the load data
+  and customer follow-up list provided below. No invented facts, no hype, no
+  marketing. Use exactly three sections:
+  1) "Board overview" — one paragraph: how many loads are live, who is on them,
+     and anything time-sensitive.
+  2) "Open follow-ups" — a bulleted list of customers that still need a call or a
+     quote sent, from the follow-up list only.
+  3) "Next actions" — exactly three suggested actions for the dispatcher, grounded
+     in the data (e.g. missing driver, fragile cargo, pending quote).
+inputs:
+  docs:
+    label: Dispatch / load documents
+    match: [dispatch, load]
+    exts: [.md, .txt, .csv, .rtf, .eml]
+  csv:
+    label: Customer follow-up list
+    match: [followup, customer]
+    exts: [.csv]
+fields:
+  customer:
+    pattern: 'Customer:\s*(.+)'
+    label: Customer
+  pickup:
+    pattern: 'Pickup:\s*(.+)'
+    label: Pickup
+  drop:
+    pattern: 'Drop:\s*(.+)'
+    label: Drop
+  driver:
+    pattern: 'Driver:\s*(.+)'
+    label: Driver
+  truck:
+    pattern: 'Truck:\s*(.+)'
+    label: Truck
+  notes:
+    pattern: 'Notes:\s*(.+)'
+    label: Notes
+  contact_email:
+    pattern: 'Contact email:\s*(.+)'
+    label: Contact
+require: [driver, truck, drop]
+warn_terms: [fragile, glass, temperature, confidential, dangerous]
+per_doc_minutes: 15
+output:
+  title: "{client} — Load & Dispatch Summary"
+  doc_type: operations document
+review:
+  approver_role: Dispatch Manager
+  checklist:
+    - Every load on today's board appears in the table
+    - Pickup and drop addresses match the source documents
+    - Flags are resolved or explicitly acknowledged by the dispatcher
+    - The narrative does not invent facts absent from the source docs

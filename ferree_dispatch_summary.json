@@ -1,0 +1,83 @@
+{
+  "template": "load_dispatch_summary",
+  "template_name": "Load & Dispatch Summary",
+  "vertical": "logistics",
+  "client": "Ferree Movers",
+  "generated_at": "2026-08-09T03:02:11+00:00",
+  "rows": [
+    {
+      "file": "load_1.md",
+      "customer": "ACME Retail Distribution",
+      "pickup": "500 W College Ave, Appleton, WI",
+      "drop": "2201 N Richmond St, Appleton, WI",
+      "driver": "J. Ramos",
+      "truck": "26ft box truck",
+      "notes": "Loading dock available 8am-11am. Call ahead.",
+      "contact_email": "dispatch@demo-acme.example"
+    },
+    {
+      "file": "load_2.md",
+      "customer": "Fox Valley Parts Co",
+      "pickup": "4101 Victory Ln, Oshkosh, WI",
+      "drop": "1210 W Frontage Rd, Neenah, WI",
+      "driver": "M. Okafor",
+      "truck": "Flatbed 40ft",
+      "notes": "Fragile — crate #3 is glass. Temperature-sensitive.",
+      "contact_email": ""
+    }
+  ],
+  "followups": [
+    {
+      "customer": "Acme Retail",
+      "email": "demo1@acme.example",
+      "last_move": "2026-06-01",
+      "status": "pending quote"
+    },
+    {
+      "customer": "Fox Valley Parts",
+      "email": "demo2@fvparts.example",
+      "last_move": "2026-07-15",
+      "status": "needs followup"
+    },
+    {
+      "customer": "Green Bay Brew Co",
+      "email": "demo3@gbbrew.example",
+      "last_move": "2026-05-20",
+      "status": "followed up"
+    },
+    {
+      "customer": "Oshkosh Office Supply",
+      "email": "demo4@os.example",
+      "last_move": "2026-08-01",
+      "status": "booked"
+    }
+  ],
+  "flags": [
+    {
+      "level": "info",
+      "message": "Term 'fragile' present — load_2.md (review context)"
+    },
+    {
+      "level": "info",
+      "message": "Term 'glass' present — load_2.md (review context)"
+    },
+    {
+      "level": "info",
+      "message": "Term 'temperature' present — load_2.md (review context)"
+    },
+    {
+      "level": "warn",
+      "message": "Demo/unroutable contact email in load_1.md — do not send real outreach to it"
+    }
+  ],
+  "summary": "**Board overview**  \nTwo live loads: Load 1 (ACME Retail Distribution) with driver J. Ramos in a 26ft box truck, requiring loading dock access by 11am. Load 2 (Fox Valley Parts Co) with driver M. Okafor in a 40ft flatbed, carrying fragile glass cargo that is temperature-sensitive. No time-sensitive alerts beyond the loading dock window for Load 1.  \n\n**Open follow-ups**  \n- Acme Retail (pending quote)  \n- Fox Valley Parts (needs followup)  \n\n**Next actions**  \n1. Review Load 2 for fragile glass cargo handling protocols.  \n2. Confirm loading dock availability for Load 1 before 11am.  \n3. Contact Fox Valley Parts Co to address their pending follow-up.",
+  "estimate_minutes": 30,
+  "approver_role": "Dispatch Manager",
+  "review_checklist": [
+    "Every load on today's board appears in the table",
+    "Pickup and drop addresses match the source documents",
+    "Flags are resolved or explicitly acknowledged by the dispatcher",
+    "The narrative does not invent facts absent from the source docs"
+  ],
+  "status": "DRAFT"
+}

@@ -1,0 +1,56 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# BUH DNA TEMPLATE — SOP Generation (manufacturing)
+# Narrow task · Narrow output · Reviewable. Deployed on a sovereign node.
+# Engine: ../buh_dna.py
+# ═══════════════════════════════════════════════════════════════════════════════
+id: sop_generation
+name: SOP Generation
+vertical: manufacturing
+version: 1.0.0
+tagline: Standard Operating Procedure drafted from process notes — QA sign-off before use.
+task: |
+  You are a process engineer supporting {client}. From the process notes provided,
+  draft ONE Standard Operating Procedure with sections: Purpose, Scope, Equipment,
+  Step-by-step procedure (numbered), Safety, and QC checks. Use ONLY steps that are
+  present in the notes. Number the steps in the order they appear. If a required
+  section has no source material, write "Not documented." Do not add steps that are
+  not in the notes — an SOP that invents a step can cause a recall. This is a DRAFT
+  for QA review before it reaches the floor.
+inputs:
+  docs:
+    label: Process / QC / shift notes
+    match: [sop, qc, quality, shift, process, line]
+    exts: [.md, .txt, .csv, .rtf]
+  csv:
+    label: Equipment / job list
+    match: [equipment, job, quote]
+    exts: [.csv]
+fields:
+  process:
+    pattern: 'Process:\s*(.+)'
+    label: Process
+  area:
+    pattern: 'Area:\s*(.+)'
+    label: Area
+  owner:
+    pattern: 'Owner:\s*(.+)'
+    label: Owner
+  revision:
+    pattern: 'Revision:\s*(.+)'
+    label: Revision
+  notes:
+    pattern: 'Notes:\s*(.+)'
+    label: Notes
+require: [process]
+warn_terms: [confidential, proprietary, recipe, trade secret, hazardous]
+per_doc_minutes: 20
+output:
+  title: "{client} — Standard Operating Procedure Draft"
+  doc_type: quality document — draft only, QA sign-off before floor use
+review:
+  approver_role: QA / Shift Lead
+  checklist:
+    - Every step in the SOP exists in the source process notes
+    - Step order matches the source; nothing reordered without cause
+    - Safety and QC sections are present and accurate
+    - Draft approved by QA before it reaches the floor

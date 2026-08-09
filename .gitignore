@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# Per-run hygiene experiment artifacts (ephemeral); keep aggregate + gate
+artifacts/hygiene/s0*_*.json
+artifacts/hygiene/*_review.json

@@ -1,0 +1,22 @@
+{
+  "experiments": {
+    "s01_template_check": {
+      "skill": "configuration-hygiene",
+      "runner": "s01_template_check_runner.py"
+    },
+    "s02_scan_determinism": {
+      "skill": "determinism",
+      "runner": "s02_scan_determinism_runner.py"
+    },
+    "s03_review_gate": {
+      "skill": "audit-hygiene",
+      "runner": "s03_review_gate_runner.py"
+    },
+    "s04_safety_contract": {
+      "skill": "data-hygiene",
+      "runner": "s04_safety_contract_runner.py"
+    }
+  },
+  "live_auth": false,
+  "note": "Pure-CLI engine — no server/daemon, so the factory's live-auth probe is scoped out (not an unresolved unknown)."
+}
