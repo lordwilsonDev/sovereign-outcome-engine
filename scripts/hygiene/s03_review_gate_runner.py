@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """S03 Review-gate hygiene — the DRAFT -> REVIEWED human gate is append-only.
 
 The BUH DNA deliverables carry an explicit human-review lifecycle: a run
@@ -20,6 +21,7 @@ import datetime as dt
 import json
 import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -27,7 +29,7 @@ from typing import Any
 REPO = Path(os.environ.get("MSB_REPO", Path(__file__).resolve().parents[2]))
 EVIDENCE_DIR = REPO / "artifacts" / "hygiene"
 EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-PY = os.environ.get("MSB_PYTHON", "/opt/homebrew/Caskroom/miniforge/base/bin/python")
+PY = os.environ.get("MSB_PYTHON", sys.executable)
 
 BUDNA = REPO / "buh_dna.py"
 SAMPLE_DIR = REPO / "sample_data"

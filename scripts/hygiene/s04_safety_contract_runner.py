@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """S04 Safety-contract hygiene — sample data is synthetic AND scanning is read-only.
 
 Two invariants the README promises:
@@ -23,6 +24,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -30,7 +32,7 @@ from typing import Any
 REPO = Path(os.environ.get("MSB_REPO", Path(__file__).resolve().parents[2]))
 EVIDENCE_DIR = REPO / "artifacts" / "hygiene"
 EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-PY = os.environ.get("MSB_PYTHON", "/opt/homebrew/Caskroom/miniforge/base/bin/python")
+PY = os.environ.get("MSB_PYTHON", sys.executable)
 
 ENGINE = REPO / "outcome_engine.py"
 SAMPLE_DIR = REPO / "sample_data"

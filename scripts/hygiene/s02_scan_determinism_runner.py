@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """S02 Scan-determinism hygiene — outcome_engine.py JSON output is reproducible.
 
 A sovereign outcome report is a *deliverable*: the same prospect data must
@@ -17,6 +18,7 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -24,7 +26,7 @@ from typing import Any
 REPO = Path(os.environ.get("MSB_REPO", Path(__file__).resolve().parents[2]))
 EVIDENCE_DIR = REPO / "artifacts" / "hygiene"
 EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-PY = os.environ.get("MSB_PYTHON", "/opt/homebrew/Caskroom/miniforge/base/bin/python")
+PY = os.environ.get("MSB_PYTHON", sys.executable)
 
 ENGINE = REPO / "outcome_engine.py"
 SAMPLE_DIR = REPO / "sample_data"
