@@ -1,8 +1,8 @@
 {
-  "deliverable_id": "soe:ferree:20260810T135330Z",
+  "deliverable_id": "soe:ferree:20260810T135910Z",
   "deliverable_type": "outcome_report",
   "produced_by": "sovereign-outcome-engine",
-  "generated_at": "20260810T135330Z",
+  "generated_at": "20260810T135910Z",
   "industry": "Logistics / Moving",
   "claims": [
     {
@@ -14,7 +14,7 @@
       "verdict": "VERIFIED",
       "evidence": [
         {
-          "path": "report.html",
+          "path": "artifacts/business/deliverables/ferree_20260810T135910Z_report.html",
           "kind": "report_artifact"
         },
         {
@@ -22,7 +22,7 @@
           "kind": "generator_source"
         }
       ],
-      "evaluated_at": "20260810T135330Z"
+      "evaluated_at": "20260810T135910Z"
     },
     {
       "claim_id": "soe:ferree:score_computed",
@@ -33,11 +33,11 @@
       "verdict": "VERIFIED",
       "evidence": [
         {
-          "path": "report.html",
+          "path": "artifacts/business/deliverables/ferree_20260810T135910Z_report.html",
           "kind": "report_artifact"
         }
       ],
-      "evaluated_at": "20260810T135330Z"
+      "evaluated_at": "20260810T135910Z"
     },
     {
       "claim_id": "soe:ferree:deal_offered",
@@ -48,11 +48,11 @@
       "verdict": "VERIFIED",
       "evidence": [
         {
-          "path": "report.html",
+          "path": "artifacts/business/deliverables/ferree_20260810T135910Z_report.html",
           "kind": "report_artifact"
         }
       ],
-      "evaluated_at": "20260810T135330Z"
+      "evaluated_at": "20260810T135910Z"
     }
   ]
 }
