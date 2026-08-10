@@ -18,7 +18,7 @@
     }
   },
   "live_auth": false,
-  "coverage_floor": 0.60,
+  "coverage_floor": 0.65,
   "coverage_source": "buh_dna,outcome_engine",
   "note": "Pure-CLI engine — no server/daemon, so the factory's live-auth probe is scoped out (not an unresolved unknown). Coverage floor on the two engine modules >= 60% — requires the in-process unit suite (tests/test_engine_units.py); subprocess-only tests cannot be measured by pytest-cov."
 

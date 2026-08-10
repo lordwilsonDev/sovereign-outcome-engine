@@ -435,3 +435,210 @@ def test_run_template_missing_dir(tmp_path) -> None:
     rc = bd.run_template("load_dispatch_summary", "X", tmp_path / "nope", None,
                          "", False, tmp_path / "o.html")
     assert rc == 1
+
+
+# ── round-2 coverage lift (targeted at the 64% -> 65%+ ratchet) ──────────────
+
+def test_bd_bridge_call_ok(monkeypatch) -> None:
+    class _Resp:
+        def read(self) -> bytes:
+            return json.dumps({"ok": True, "result": {"files": ["a.md"]}}).encode()
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: _Resp())
+    assert bd.bridge_call("vault_list", {"path": ""}, "s") == {"files": ["a.md"]}
+
+
+def test_bd_bridge_call_raises_on_bridge_failure(monkeypatch) -> None:
+    class _Resp:
+        def read(self) -> bytes:
+            return json.dumps({"ok": False, "detail": "denied"}).encode()
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: _Resp())
+    with pytest.raises(RuntimeError, match="bridge vault_list failed: denied"):
+        bd.bridge_call("vault_list", {}, "s")
+
+
+def test_bd_vault_list_and_read(monkeypatch) -> None:
+    calls: list[str] = []
+
+    def fake_urlopen(req, timeout=None):
+        calls.append(req.full_url)
+        tool = json.loads(req.data.decode())["tool"]
+        if tool == "vault_list":
+            payload = {"ok": True, "result": {"files": ["a.md"]}}
+        else:
+            payload = {"ok": True, "result": {"content": "hello vault"}}
+
+        class _Resp:
+            def read(self) -> bytes:
+                return json.dumps(payload).encode()
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+        return _Resp()
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+    assert bd.vault_list("10_Customers/X", "s") == ["a.md"]
+    assert bd.vault_read("10_Customers/X/a.md", "s") == "hello vault"
+    assert all(bd.MCP_PROXY_URL in u for u in calls)
+
+
+def _vault_template() -> dict:
+    return {
+        "inputs": {
+            "docs": {"match": ["dispatch", "note"], "exts": [".md", ".txt"]},
+            "csv": {"match": ["followup"], "exts": [".csv"]},
+        }
+    }
+
+
+def test_discover_vault_buckets_and_skips(monkeypatch) -> None:
+    def fake_list(rel: str, secret: str) -> list:
+        return {"": ["docs/", "dispatch-a.md", ".DS_Store", ".hidden.md"],
+                "docs": ["followup.csv", "plain.txt", "note-b.md"]}.get(rel, [])
+
+    monkeypatch.setattr(bd, "vault_list", fake_list)
+    monkeypatch.setattr(bd, "vault_read", lambda rel, s: f"content of {rel}")
+    groups = bd.discover_vault("", _vault_template(), "s")
+    assert sorted(p for p, _ in groups["docs"]) == ["dispatch-a.md", "docs/note-b.md"]
+    assert [p for p, _ in groups["csv"]] == ["docs/followup.csv"]
+    assert all(t.startswith("content of") for _, t in groups["docs"])
+
+
+def test_discover_vault_respects_max_files(monkeypatch) -> None:
+    monkeypatch.setattr(bd, "vault_list", lambda rel, s: ["dispatch-a.md"])
+    monkeypatch.setattr(bd, "vault_read", lambda rel, s: "x")
+    groups = bd.discover_vault("", _vault_template(), "s", max_files=1)
+    assert len(groups["docs"]) == 1
+
+
+def test_discover_vault_survives_bridge_errors(monkeypatch) -> None:
+    def fake_list(rel: str, secret: str):
+        raise RuntimeError("bridge down")
+
+    monkeypatch.setattr(bd, "vault_list", fake_list)
+    assert bd.discover_vault("", _vault_template(), "s") == {"docs": [], "csv": []}
+
+
+def test_load_template_missing_required_keys(monkeypatch) -> None:
+    monkeypatch.setattr(bd.yaml, "safe_load", lambda *a, **k: {"id": "x"})
+    with pytest.raises(SystemExit, match="missing required keys"):
+        bd.load_template("load_dispatch_summary")
+
+
+def test_load_template_parse_failure(monkeypatch) -> None:
+    def _boom(*a, **k):
+        raise ValueError("bad yaml")
+
+    monkeypatch.setattr(bd.yaml, "safe_load", _boom)
+    with pytest.raises(SystemExit, match="failed to parse"):
+        bd.load_template("load_dispatch_summary")
+
+
+def test_load_template_yaml_missing(monkeypatch) -> None:
+    monkeypatch.setattr(bd, "yaml", None)
+    with pytest.raises(SystemExit, match="PyYAML is required"):
+        bd.load_template("load_dispatch_summary")
+
+
+def test_read_local_text_unreadable(tmp_path) -> None:
+    # A directory passes stat() but fails read_text — the exception path returns ''.
+    assert bd.read_local_text(tmp_path) == ""
+
+
+def test_discover_local_skips_hidden_and_wrong_ext(tmp_path) -> None:
+    (tmp_path / "dispatch-note.txt").write_text("x", encoding="utf-8")
+    (tmp_path / ".hidden-note.txt").write_text("x", encoding="utf-8")
+    (tmp_path / "dispatch-note.pdf").write_text("x", encoding="utf-8")  # wrong ext
+    (tmp_path / "unrelated.txt").write_text("x", encoding="utf-8")      # no keyword
+    sub = tmp_path / ".hiddendir"
+    sub.mkdir()
+    (sub / "dispatch-x.txt").write_text("x", encoding="utf-8")          # hidden dir skipped
+    groups = bd.discover_local(tmp_path, SYNTH_TEMPLATE)
+    assert [p.name for p in groups["docs"]] == ["dispatch-note.txt"]
+
+
+def test_parse_csv_rows_drops_all_empty_rows() -> None:
+    rows = bd.parse_csv_rows("f.csv", "name,email\nA,a@b.com\n,  \nB,b@c.com\n")
+    assert rows == [{"name": "A", "email": "a@b.com"},
+                    {"name": "B", "email": "b@c.com"}]
+
+
+def test_llm_draft_success_and_failure(monkeypatch) -> None:
+    class _Resp:
+        def read(self) -> bytes:
+            return json.dumps({"payload": {"text": "The drafted narrative"}}).encode()
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: _Resp())
+    out = bd.llm_draft(SYNTH_TEMPLATE, "Client", _rows(),
+                       [{"name": "A", "email": "a@b.com"}],
+                       [{"level": "warn", "message": "Missing X"}])
+    assert out == "The drafted narrative"
+
+    def _boom(*a, **k):
+        raise OSError("offline")
+
+    monkeypatch.setattr("urllib.request.urlopen", _boom)
+    assert bd.llm_draft(SYNTH_TEMPLATE, "Client", [], [], []) == ""
+
+
+def test_msb_available_true_and_false(monkeypatch) -> None:
+    class _Ok:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    monkeypatch.setattr("time.sleep", lambda _: None)
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: _Ok())
+    assert bd.msb_available() is True
+
+    def _boom(*a, **k):
+        raise OSError("offline")
+
+    monkeypatch.setattr("urllib.request.urlopen", _boom)
+    assert bd.msb_available() is False
+
+
+def test_render_deliverable_empty_rows_and_no_flags() -> None:
+    html = bd.render_deliverable(SYNTH_TEMPLATE, "EmptyCo", [], [], [],
+                                 "", "DRAFT", None, 0)
+    assert "No matching documents found" in html
+    assert "No flags — every required field present" in html
+    assert "0 document(s) matched" in html
+
+
+def test_render_deliverable_review_checklist_states() -> None:
+    html = bd.render_deliverable(SYNTH_TEMPLATE, "X", _rows(), [], [],
+                                 "", "REVIEWED", None, 10)
+    assert "<span class='cb'>✓</span> Check the names" in html  # reviewed -> checked
+    assert "<span class='cb'>☐</span>" not in html
+    draft = bd.render_deliverable(SYNTH_TEMPLATE, "X", _rows(), [], [],
+                                  "", "DRAFT", None, 10)
+    assert "<span class='cb'>☐</span> Check the names" in draft  # draft -> unchecked
+
