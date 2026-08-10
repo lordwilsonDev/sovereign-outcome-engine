@@ -7,3 +7,6 @@ __pycache__/
 artifacts/hygiene/s0*_*.json
 artifacts/hygiene/*_review.json
 .coverage
+
+# mutmut build artifacts — evidence is the mutation_score.json snapshot, not the mutant tree
+mutants/
