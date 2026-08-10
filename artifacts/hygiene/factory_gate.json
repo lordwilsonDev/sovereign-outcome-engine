@@ -3,14 +3,14 @@
     "project_id": "9f80a9abe62c",
     "name": "sovereign-outcome-engine",
     "root": "/Users/lordwilson/sovereign-outcome-engine",
-    "discovered_at": "2026-08-09T17:52:22.697209+00:00"
+    "discovered_at": "2026-08-10T05:34:13.639889+00:00"
   },
   "BASELINE": {
     "project": {
       "project_id": "9f80a9abe62c",
       "name": "sovereign-outcome-engine",
       "root": "/Users/lordwilson/sovereign-outcome-engine",
-      "discovered_at": "2026-08-09T17:52:22.697209+00:00"
+      "discovered_at": "2026-08-10T05:34:13.639889+00:00"
     },
     "tests": "n/a",
     "git": "n/a",
@@ -20,8 +20,15 @@
   "VERIFICATION": {
     "pytest": {
       "passed": true,
-      "summary": "8 passed in 0.67s",
+      "summary": "48 passed in 0.97s",
       "duration_s": 1
+    },
+    "coverage": {
+      "configured": true,
+      "source": "buh_dna,outcome_engine",
+      "floor_pct": 60.0,
+      "pct": 64.0,
+      "met": true
     },
     "live_auth": {
       "verified": null,
@@ -39,44 +46,45 @@
       "s03_review_gate",
       "s04_safety_contract"
     ],
-    "live_auth": false
+    "live_auth": false,
+    "pytest_target": "tests/"
   },
   "EVIDENCE_INDEX": {
     "claims_verified": 4,
     "artifacts": [
-      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260809T175224Z.json",
-      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260809T175224Z.json",
-      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260809T175224Z.json",
-      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260809T175224Z.json"
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260810T053415Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260810T053415Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260810T053416Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260810T053416Z.json"
     ],
-    "verified_at": "2026-08-09T17:52:24.937263+00:00",
+    "verified_at": "2026-08-10T05:34:16.159972+00:00",
     "member_results": [
       {
         "experiment": "s01_template_check",
         "skill": "configuration-hygiene",
         "verdict": "pass",
-        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260809T175224Z.json",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260810T053415Z.json",
         "violations": []
       },
       {
         "experiment": "s02_scan_determinism",
         "skill": "determinism",
         "verdict": "pass",
-        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260809T175224Z.json",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260810T053415Z.json",
         "violations": []
       },
       {
         "experiment": "s03_review_gate",
         "skill": "audit-hygiene",
         "verdict": "pass",
-        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260809T175224Z.json",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260810T053416Z.json",
         "violations": []
       },
       {
         "experiment": "s04_safety_contract",
         "skill": "data-hygiene",
         "verdict": "pass",
-        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260809T175224Z.json",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260810T053416Z.json",
         "violations": []
       }
     ]
@@ -95,6 +103,7 @@
     "unresolved_unknowns_disclosed": true,
     "release_verdict": "PASS",
     "unresolved_unknowns": [],
+    "coverage_floor_met": true,
     "notes": [
       "live_auth scoped out: project suite.json declares live_auth:false (no server to probe)"
     ],
