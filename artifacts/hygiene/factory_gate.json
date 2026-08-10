@@ -3,14 +3,14 @@
     "project_id": "9f80a9abe62c",
     "name": "sovereign-outcome-engine",
     "root": "/Users/lordwilson/sovereign-outcome-engine",
-    "discovered_at": "2026-08-10T06:26:45.677885+00:00"
+    "discovered_at": "2026-08-10T06:33:06.175614+00:00"
   },
   "BASELINE": {
     "project": {
       "project_id": "9f80a9abe62c",
       "name": "sovereign-outcome-engine",
       "root": "/Users/lordwilson/sovereign-outcome-engine",
-      "discovered_at": "2026-08-10T06:26:45.677885+00:00"
+      "discovered_at": "2026-08-10T06:33:06.175614+00:00"
     },
     "tests": "n/a",
     "git": "n/a",
@@ -20,7 +20,7 @@
   "VERIFICATION": {
     "pytest": {
       "passed": true,
-      "summary": "64 passed in 0.90s",
+      "summary": "64 passed in 1.04s",
       "duration_s": 1
     },
     "coverage": {
@@ -52,39 +52,39 @@
   "EVIDENCE_INDEX": {
     "claims_verified": 4,
     "artifacts": [
-      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260810T062647Z.json",
-      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260810T062647Z.json",
-      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260810T062647Z.json",
-      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260810T062647Z.json"
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260810T063308Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260810T063308Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260810T063308Z.json",
+      "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260810T063308Z.json"
     ],
-    "verified_at": "2026-08-10T06:26:47.937921+00:00",
+    "verified_at": "2026-08-10T06:33:08.501837+00:00",
     "member_results": [
       {
         "experiment": "s01_template_check",
         "skill": "configuration-hygiene",
         "verdict": "pass",
-        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260810T062647Z.json",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260810T063308Z.json",
         "violations": []
       },
       {
         "experiment": "s02_scan_determinism",
         "skill": "determinism",
         "verdict": "pass",
-        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260810T062647Z.json",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260810T063308Z.json",
         "violations": []
       },
       {
         "experiment": "s03_review_gate",
         "skill": "audit-hygiene",
         "verdict": "pass",
-        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260810T062647Z.json",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260810T063308Z.json",
         "violations": []
       },
       {
         "experiment": "s04_safety_contract",
         "skill": "data-hygiene",
         "verdict": "pass",
-        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260810T062647Z.json",
+        "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260810T063308Z.json",
         "violations": []
       }
     ]
