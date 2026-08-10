@@ -602,6 +602,18 @@ def emit_claim_container(client: str, industry: dict, scan: dict,
         repo_root = Path(__file__).resolve().parent
         ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         slug = client.replace(" ", "_").lower()
+
+        # The claim container's evidence must point at something that EXISTS
+        # and PERSISTS. The report may have been written to a temp path (e.g.
+        # by a hygiene run), so copy it into artifacts/business/deliverables/
+        # and reference the durable copy — a claim whose evidence can be
+        # deleted is a claim that can never be verified later.
+        deliverables_dir = repo_root / "artifacts" / "business" / "deliverables"
+        deliverables_dir.mkdir(parents=True, exist_ok=True)
+        durable_report = deliverables_dir / f"{slug}_{ts}_{report_path.name}"
+        durable_report.write_bytes(report_path.read_bytes())
+        report_ref = f"artifacts/business/deliverables/{durable_report.name}"
+
         claims = [
             {
                 "claim_id": f"soe:{slug}:scan_readonly",
@@ -613,7 +625,7 @@ def emit_claim_container(client: str, industry: dict, scan: dict,
                 "verification_tier": "T2",
                 "verdict": "VERIFIED",
                 "evidence": [
-                    {"path": report_path.name, "kind": "report_artifact"},
+                    {"path": report_ref, "kind": "report_artifact"},
                     {"path": "outcome_engine.py", "kind": "generator_source"},
                 ],
                 "evaluated_at": ts,
@@ -627,7 +639,7 @@ def emit_claim_container(client: str, industry: dict, scan: dict,
                               f"estimated manual work"),
                 "verification_tier": "T2",
                 "verdict": "VERIFIED",
-                "evidence": [{"path": report_path.name, "kind": "report_artifact"}],
+                "evidence": [{"path": report_ref, "kind": "report_artifact"}],
                 "evaluated_at": ts,
             },
             {
@@ -640,7 +652,7 @@ def emit_claim_container(client: str, industry: dict, scan: dict,
                               f"${deal.get('std_monthly', 0)}/mo standard"),
                 "verification_tier": "T2",
                 "verdict": "VERIFIED",
-                "evidence": [{"path": report_path.name, "kind": "report_artifact"}],
+                "evidence": [{"path": report_ref, "kind": "report_artifact"}],
                 "evaluated_at": ts,
             },
         ]

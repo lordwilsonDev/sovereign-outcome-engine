@@ -46,6 +46,7 @@ EXPERIMENTS: dict[str, Path] = {
     "s02_scan_determinism": HERE / "s02_scan_determinism_runner.py",
     "s03_review_gate": HERE / "s03_review_gate_runner.py",
     "s04_safety_contract": HERE / "s04_safety_contract_runner.py",
+    "s05_claim_container": HERE / "s05_claim_container_runner.py",
 }
 
 _WEIGHT = {"fail": 0, "partial": 1, "blocked": 2, "pass": 3, "unknown": 4}

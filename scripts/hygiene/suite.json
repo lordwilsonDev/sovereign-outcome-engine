@@ -15,6 +15,10 @@
     "s04_safety_contract": {
       "skill": "data-hygiene",
       "runner": "s04_safety_contract_runner.py"
+    },
+    "s05_claim_container": {
+      "skill": "business-hygiene",
+      "runner": "s05_claim_container_runner.py"
     }
   },
   "live_auth": false,
