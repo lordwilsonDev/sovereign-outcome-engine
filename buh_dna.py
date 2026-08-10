@@ -295,9 +295,13 @@ def compute_flags(rows: list[dict], template: dict) -> list[dict]:
             if re.search(re.escape(term), " ".join(str(v) for v in row.values()), re.IGNORECASE):
                 flags.append({"level": "info", "message": f"Term '{term}' present — {file} (review context)"})
     # Honesty: demo/unroutable contact emails are flagged, not silently used.
+    # `@example.` matches the canonical demo form (user@example.com). The old
+    # pattern `\.example\b` only matched a dot BEFORE 'example' (subdomain
+    # form, e.g. demo.example.com) and never fired for demo@example.com — a
+    # dead honesty flag.
     for row in rows:
         email = str(row.get("contact_email", "") or "").strip()
-        if re.search(r"\.example\b", email, re.IGNORECASE):
+        if re.search(r"@example\.", email, re.IGNORECASE):
             flags.append({"level": "warn", "message": f"Demo/unroutable contact email in {row.get('file', '?')} — do not send real outreach to it"})
     return flags
 
