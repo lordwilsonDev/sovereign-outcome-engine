@@ -3,8 +3,14 @@ name: factory-gate
 # Engineering-hygiene factory gate for sovereign-outcome-engine.
 # Every push/PR to main re-runs the pytest suite (8 tests), a coverage gate
 # (subprocess-aware — the tests exercise the engine via sys.executable), mypy,
-# ruff (E9/F/I), and the four offline hygiene experiments. Any non-PASS leg
-# fails the job, which blocks the push/merge.
+# ruff (E9/F/I), and the five offline hygiene experiments (s01-s05). Any
+# non-PASS leg fails the job, which blocks the push/merge.
+#
+# s05 (claim-container validation) delegates to the factory's producer
+# adapter (validate_claim_containers.py), so the factory is checked out below
+# (GH_PAT secret; the factory repo is private) and pointed at via
+# VALIDATE_CLAIM_CONTAINERS. Without the secret the checkout is skipped and
+# s05 fails loudly — the gate stays honest rather than skipping the leg.
 #
 # Coverage floor: 70% (raised 2026-08-09 from 60% — the constellation's
 # forcing function toward agent-reach's 75% level; measured coverage was
@@ -57,7 +63,18 @@ jobs:
       - name: Lint gate (ruff E9/F/I)
         run: ruff check --select E9,F,I .
 
+      - name: Checkout engineering-hygiene-factory (s05 validator dependency)
+        if: ${{ env.GH_PAT != '' }}
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        uses: actions/checkout@v4
+        with:
+          repository: lordwilsonDev/engineering-hygiene-factory
+          token: ${{ secrets.GH_PAT }}
+          path: .factory
+
       - name: Hygiene suite (offline experiments)
         env:
           MSB_REPO: ${{ github.workspace }}
+          VALIDATE_CLAIM_CONTAINERS: ${{ github.workspace }}/.factory/scripts/validate_claim_containers.py
         run: python scripts/hygiene/hygiene_runner.py --all
