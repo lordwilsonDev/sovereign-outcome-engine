@@ -376,7 +376,6 @@ def _rows() -> list[dict]:
 
 def test_compute_flags() -> None:
     flags = bd.compute_flags(_rows(), SYNTH_TEMPLATE)
-    messages = " | ".join(f["message"] for f in flags)
     assert any(f["level"] == "warn" and "Missing Customer Name" in f["message"] for f in flags)
     assert any("Demo/unroutable" in f["message"] for f in flags)
 
