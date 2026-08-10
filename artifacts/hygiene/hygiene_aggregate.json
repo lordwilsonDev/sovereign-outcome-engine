@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-10T13:59:33.029628+00:00",
+  "timestamp": "2026-08-10T14:17:28.450231+00:00",
   "environment": {
     "repo": "/Users/lordwilson/sovereign-outcome-engine",
     "python": "/opt/homebrew/Caskroom/miniforge/base/bin/python",
@@ -9,31 +9,31 @@
     {
       "experiment": "s01_template_check",
       "verdict": "pass",
-      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260810T135932Z.json",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s01_template_check_20260810T141728Z.json",
       "returncode": 0
     },
     {
       "experiment": "s02_scan_determinism",
       "verdict": "pass",
-      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260810T135932Z.json",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s02_scan_determinism_20260810T141728Z.json",
       "returncode": 0
     },
     {
       "experiment": "s03_review_gate",
       "verdict": "pass",
-      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260810T135932Z.json",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s03_review_gate_20260810T141728Z.json",
       "returncode": 0
     },
     {
       "experiment": "s04_safety_contract",
       "verdict": "pass",
-      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260810T135932Z.json",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s04_safety_contract_20260810T141728Z.json",
       "returncode": 0
     },
     {
       "experiment": "s05_claim_container",
       "verdict": "pass",
-      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s05_claim_container_20260810T135933Z.json",
+      "artifact": "/Users/lordwilson/sovereign-outcome-engine/artifacts/hygiene/s05_claim_container_20260810T141728Z.json",
       "returncode": 0
     }
   ],
