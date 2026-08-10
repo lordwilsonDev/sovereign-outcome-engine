@@ -1,0 +1,58 @@
+{
+  "deliverable_id": "soe:ferree:20260810T135329Z",
+  "deliverable_type": "outcome_report",
+  "produced_by": "sovereign-outcome-engine",
+  "generated_at": "20260810T135329Z",
+  "industry": "Logistics / Moving",
+  "claims": [
+    {
+      "claim_id": "soe:ferree:scan_readonly",
+      "subject": "Ferree data scan",
+      "claim_type": "computed_result",
+      "assertion": "Scanned 5 files across 0 dirs read-only (no writes, no moves, no uploads)",
+      "verification_tier": "T2",
+      "verdict": "VERIFIED",
+      "evidence": [
+        {
+          "path": "report.html",
+          "kind": "report_artifact"
+        },
+        {
+          "path": "outcome_engine.py",
+          "kind": "generator_source"
+        }
+      ],
+      "evaluated_at": "20260810T135329Z"
+    },
+    {
+      "claim_id": "soe:ferree:score_computed",
+      "subject": "Ferree Data ROI score",
+      "claim_type": "computed_metric",
+      "assertion": "Data ROI Score 10/100 from 2 hrs/mo estimated manual work",
+      "verification_tier": "T2",
+      "verdict": "VERIFIED",
+      "evidence": [
+        {
+          "path": "report.html",
+          "kind": "report_artifact"
+        }
+      ],
+      "evaluated_at": "20260810T135329Z"
+    },
+    {
+      "claim_id": "soe:ferree:deal_offered",
+      "subject": "Ferree founding-client deal",
+      "claim_type": "deliverable_claim",
+      "assertion": "Founding fee $999 + $99/mo x6 + $199/mo standard",
+      "verification_tier": "T2",
+      "verdict": "VERIFIED",
+      "evidence": [
+        {
+          "path": "report.html",
+          "kind": "report_artifact"
+        }
+      ],
+      "evaluated_at": "20260810T135329Z"
+    }
+  ]
+}
