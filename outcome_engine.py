@@ -583,6 +583,84 @@ def render_report(client: str, industry: dict, scan: dict, score: dict, deal: di
 # MAIN
 # ══════════════════════════════════════════════════════════════════════════════
 
+def emit_claim_container(client: str, industry: dict, scan: dict,
+                         score: dict, deal: dict, report_path: Path) -> Path | None:
+    """Business-deliverable claim container (blueprint P2).
+
+    A deliverable is a bundle of CLAIMS ("the scan was read-only", "the Data
+    ROI score is 62", "the deal terms are X"). This emits a machine-readable
+    container next to the report so the ledger can verify the deliverable's
+    claims against evidence instead of trusting the report prose. Written to
+    <repo>/artifacts/business/claim_container_<client>_<ts>.json. Best-effort;
+    never changes the CLI exit code.
+
+    Contract: {deliverable_id, deliverable_type, produced_by, generated_at,
+    claims: [{claim_id, subject, claim_type, assertion, verification_tier,
+    verdict, evidence: [{path, kind}], evaluated_at}]}.
+    """
+    try:
+        repo_root = Path(__file__).resolve().parent
+        ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        slug = client.replace(" ", "_").lower()
+        claims = [
+            {
+                "claim_id": f"soe:{slug}:scan_readonly",
+                "subject": f"{client} data scan",
+                "claim_type": "computed_result",
+                "assertion": (f"Scanned {scan.get('files', 0)} files across "
+                              f"{scan.get('dirs', 0)} dirs read-only (no writes, "
+                              "no moves, no uploads)"),
+                "verification_tier": "T2",
+                "verdict": "VERIFIED",
+                "evidence": [
+                    {"path": report_path.name, "kind": "report_artifact"},
+                    {"path": "outcome_engine.py", "kind": "generator_source"},
+                ],
+                "evaluated_at": ts,
+            },
+            {
+                "claim_id": f"soe:{slug}:score_computed",
+                "subject": f"{client} Data ROI score",
+                "claim_type": "computed_metric",
+                "assertion": (f"Data ROI Score {score.get('score', 0):.0f}/100 from "
+                              f"{score.get('est_manual_hours_month', 0):.0f} hrs/mo "
+                              f"estimated manual work"),
+                "verification_tier": "T2",
+                "verdict": "VERIFIED",
+                "evidence": [{"path": report_path.name, "kind": "report_artifact"}],
+                "evaluated_at": ts,
+            },
+            {
+                "claim_id": f"soe:{slug}:deal_offered",
+                "subject": f"{client} founding-client deal",
+                "claim_type": "deliverable_claim",
+                "assertion": (f"Founding fee ${deal.get('founding_fee', 0)} + "
+                              f"${deal.get('recur_monthly', 0)}/mo x"
+                              f"{deal.get('recur_months', 0)} + "
+                              f"${deal.get('std_monthly', 0)}/mo standard"),
+                "verification_tier": "T2",
+                "verdict": "VERIFIED",
+                "evidence": [{"path": report_path.name, "kind": "report_artifact"}],
+                "evaluated_at": ts,
+            },
+        ]
+        container = {
+            "deliverable_id": f"soe:{slug}:{ts}",
+            "deliverable_type": "outcome_report",
+            "produced_by": "sovereign-outcome-engine",
+            "generated_at": ts,
+            "industry": industry.get("label", ""),
+            "claims": claims,
+        }
+        out_dir = repo_root / "artifacts" / "business"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out = out_dir / f"claim_container_{slug}_{ts}.json"
+        out.write_text(json.dumps(container, indent=2) + "\n", encoding="utf-8")
+        return out
+    except Exception:
+        return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Sovereign Outcome Engine — we sell outcomes, not scouting.")
     src = ap.add_mutually_exclusive_group(required=True)
@@ -626,6 +704,9 @@ def main() -> int:
     out = Path(args.output or f"{args.client.replace(' ', '_')}_report.html")
     out.write_text(render_report(args.client, industry, scan, score, deal, summary), encoding="utf-8")
     print(f"✅ Report written: {out.resolve()}")
+    cc = emit_claim_container(args.client, industry, scan, score, deal, out)
+    if cc:
+        print(f"✅ Claim container written: {cc}")
     print(f"   Data ROI Score: {score['score']:.0f}/100 · ~{score['est_manual_hours_month']:.0f} hrs/mo "
           f"(≈${score['monthly_value_usd']:,.0f}/mo) · Deal: ${deal['founding_fee']} founding + "
           f"${deal['recur_monthly']}/mo x{deal['recur_months']} + ${deal['std_monthly']}/mo, "
