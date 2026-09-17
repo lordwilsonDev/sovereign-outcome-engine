@@ -11,6 +11,30 @@ name: factory-gate
 # (GH_PAT secret; the factory repo is private) and pointed at via
 # VALIDATE_CLAIM_CONTAINERS. Without the secret the checkout is skipped and
 # s05 fails loudly — the gate stays honest rather than skipping the leg.
+# That much is observed, not assumed: run 31395751732 (2026-08-10, before the
+# checkout step existed) ended `verdict=fail experiments=5` with s01-s04 pass
+# and s05 fail alone.
+#
+# What the OLD guard got wrong is narrower than the sibling repos', but still
+# real. It was `if: env.GH_PAT != ''` — presence, never VALIDITY — and it failed
+# in one direction badly:
+#   * EXPIRED token (the state since 2026-09-09T04:44Z): the guard passed, the
+#     checkout ran, and it died on a bare "Bad credentials". That skipped the
+#     hygiene suite with it, so the FOUR token-independent experiments (s01-s04)
+#     were lost to a credential they never use, and the red named no cause. This
+#     is this repo's actual defect — dormant (last run 2026-08-10), so the next
+#     push would have been the first to hit it.
+#   * MISSING secret: benign HERE, unlike domain-router — the hygiene suite runs
+#     unconditionally and s05 fails closed on every path (nonzero validator exit
+#     and any exception both record `fail`), so the run is red either way.
+#     Qualified, though: s05 only REACHES its validator check once claim
+#     containers exist (with none it returns `pass` — "nothing to validate"), so
+#     that benign-ness rests on the 11 committed containers under
+#     artifacts/business/. Verified both ways locally; the terminal step below
+#     removes the dependency on them.
+# The preflight below records usability in a step output, the factory checkout
+# gates on it, and a final step fails the run unless the validator was actually
+# on disk — so a token problem is an attributed red, and s01-s04 always report.
 #
 # Coverage floor: 70% (raised 2026-08-09 from 60% — the constellation's
 # forcing function toward agent-reach's 75% level; measured coverage was
@@ -43,6 +67,46 @@ jobs:
           pip install --upgrade pip
           pip install pytest pyyaml pytest-cov mypy ruff
 
+      # Preflight: is GH_PAT actually USABLE? Two questions, because s05 needs
+      # both answers — is the token alive, and can it read the PRIVATE factory
+      # repo? They fail differently and the difference is the whole debugging
+      # cost: 401 means rotate the token; 403/404 means grant it Contents:Read on
+      # lordwilsonDev/engineering-hygiene-factory. This step never fails itself
+      # (the final step does), so the secret-free legs below always report, and a
+      # dead token is named in seconds rather than after the slow coverage leg.
+      - name: Validate GH_PAT (non-fatal — annotates the cause, gates the factory checkout)
+        id: pat
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -z "${GH_PAT:-}" ]; then
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "::error::GH_PAT is not set — s05 cannot reach the claim-container validator, so this run will FAIL. Set GH_PAT (fine-grained, Contents:Read on lordwilsonDev/engineering-hygiene-factory is least privilege)."
+            exit 0
+          fi
+          code=$(curl -sS -o /dev/null -D /tmp/pat_headers -w '%{http_code}' \
+                   -H "Authorization: Bearer $GH_PAT" \
+                   -H "Accept: application/vnd.github+json" \
+                   https://api.github.com/user) || code=000
+          exp=$(grep -i '^github-authentication-token-expiration:' /tmp/pat_headers 2>/dev/null | sed 's/^[^:]*:[[:space:]]*//; s/\r$//' || true)
+          if [ -n "$exp" ]; then echo "GH_PAT expires: $exp"; else echo "GH_PAT expiry: not reported for this token type"; fi
+          acc=$(curl -sS -o /dev/null -w '%{http_code}' \
+                  -H "Authorization: Bearer $GH_PAT" \
+                  -H "Accept: application/vnd.github+json" \
+                  https://api.github.com/repos/lordwilsonDev/engineering-hygiene-factory) || acc=000
+          if [ "$code" = "200" ] && [ "$acc" = "200" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+            echo "GH_PAT valid (HTTP 200) and reads lordwilsonDev/engineering-hygiene-factory (HTTP 200)"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            if [ "$code" != "200" ]; then
+              echo "::error::GH_PAT rejected (HTTP $code) — the token is expired or revoked. Rotate it: 'gh secret set GH_PAT -R lordwilsonDev/sovereign-outcome-engine'."
+            else
+              echo "::error::GH_PAT is valid but cannot read lordwilsonDev/engineering-hygiene-factory (HTTP $acc) — grant that token Contents:Read on the repo, or s05 cannot run the real validator."
+            fi
+            echo "::error::The factory checkout below will SKIP, so s05 will fail with 'validator not found'. s01-s04 still run, and the final step fails this run so it can never be read as green."
+          fi
+
       - name: Regression suite + coverage gate (CLI subprocess coverage)
         run: |
           set -euo pipefail
@@ -63,10 +127,17 @@ jobs:
       - name: Lint gate (ruff E9/F/I)
         run: ruff check --select E9,F,I .
 
+      # `continue-on-error` is deliberate and safe HERE, though the sibling
+      # workflow in domain-router must NOT tolerate its checkouts: s05 fails
+      # closed whenever the validator is absent, so tolerating this step cannot
+      # produce a green. What it buys is that a failure DESPITE a usable token
+      # (rate limit, transient 5xx, a bad ref) costs only s05 — not the four
+      # token-independent experiments, which is exactly the loss the old guard
+      # caused. The step-scoped `env: GH_PAT` block is also gone: it existed only
+      # to feed the presence-only guard, and `with: token:` is what authenticates.
       - name: Checkout engineering-hygiene-factory (s05 validator dependency)
-        if: ${{ env.GH_PAT != '' }}
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+        if: ${{ steps.pat.outputs.ok == 'true' }}
+        continue-on-error: true
         uses: actions/checkout@v4
         with:
           repository: lordwilsonDev/engineering-hygiene-factory
@@ -78,3 +149,29 @@ jobs:
           MSB_REPO: ${{ github.workspace }}
           VALIDATE_CLAIM_CONTAINERS: ${{ github.workspace }}/.factory/scripts/validate_claim_containers.py
         run: python scripts/hygiene/hygiene_runner.py --all
+
+      # LOUD, LATE, and the reason this workflow cannot lie. When the token is
+      # unusable the checkout above skips and s05 fails — but that red is
+      # attributed to a missing validator FILE, not to the credential that caused
+      # it, and s05's fail-loud path depends on committed claim containers
+      # existing under artifacts/business/ (with none, it passes trivially —
+      # "nothing to validate"). So this step asserts the END STATE instead: the
+      # validator is on disk. That makes the token problem un-greenable no matter
+      # what the artifact directory contains, and names the cause in words.
+      #
+      # Gated on the preflight having RUN (`!cancelled()` alone would also fire
+      # when an earlier secret-free leg failed and skipped the preflight, which
+      # would misreport that failure as a token problem).
+      - name: Report unusable GH_PAT (fails only after the gate has decided)
+        if: ${{ !cancelled() && steps.pat.outcome == 'success' }}
+        run: |
+          validator="${{ github.workspace }}/.factory/scripts/validate_claim_containers.py"
+          if [ "${{ steps.pat.outputs.ok }}" != "true" ]; then
+            echo "::error::factory-gate could not run s05 against the factory validator — GH_PAT was unusable. See the 'Validate GH_PAT' step for the HTTP status and expiry, then rotate the token and re-run."
+            exit 1
+          fi
+          if [ ! -f "$validator" ]; then
+            echo "::error::GH_PAT validated, but the factory checkout did not produce $validator — s05 could not run the real validator. Check the 'Checkout engineering-hygiene-factory' step (it is continue-on-error)."
+            exit 1
+          fi
+          echo "GH_PAT usable and the factory validator is present — s05 ran against it."
